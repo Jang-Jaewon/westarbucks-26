@@ -15,6 +15,28 @@ class OwnerView(View):
             return JsonResponse({"MESSAGE": "IVALID_KEY"}, status=400)
         return JsonResponse({"MESSAGE": "CREATED"}, status=201)
 
+    def get(self, request):
+        owners = Owner.objects.all()
+        result = []
+        for owner in owners:
+            dogs = owner.dog_set.all()
+            dog_list = []
+            for dog in dogs:
+                dog_data = {
+                    "name": dog.name,
+                    "age": dog.age,
+                }
+                dog_list.append(dog_data)
+            result.append(
+                {
+                    "name": owner.name,
+                    "mail": owner.email,
+                    "age": owner.age,
+                    "my_dogs": dog_list,
+                }
+            )
+        return JsonResponse({"MESSAGE": result}, status=200)
+
 
 class DogView(View):
     def post(self, request):
@@ -28,3 +50,16 @@ class DogView(View):
         except KeyError:
             return JsonResponse({"MESSAGE": "IVALID_KEY"}, status=400)
         return JsonResponse({"MESSAGE": "CREATED"}, status=201)
+
+    def get(self, request):
+        dogs = Dog.objects.all()
+        result = []
+        for dog in dogs:
+            result.append(
+                {
+                    "name": dog.name,
+                    "age": dog.age,
+                    "owner": dog.owner.name,
+                }
+            )
+        return JsonResponse({"MESSAGE": result}, status=200)
