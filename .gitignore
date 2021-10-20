@@ -362,3 +362,7 @@ zsdoc/data
 
 ##### my_settgins.py #####
 my_settings.py
+
+
+## .vscode
+.vscode/
