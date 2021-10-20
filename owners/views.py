@@ -16,25 +16,17 @@ class OwnerView(View):
         return JsonResponse({"MESSAGE": "CREATED"}, status=201)
 
     def get(self, request):
-        owners = Owner.objects.all()
-        result = []
-        for owner in owners:
-            dogs = owner.dog_set.all()
-            dog_list = []
-            for dog in dogs:
-                dog_data = {
-                    "name": dog.name,
-                    "age": dog.age,
-                }
-                dog_list.append(dog_data)
-            result.append(
-                {
-                    "name": owner.name,
-                    "mail": owner.email,
-                    "age": owner.age,
-                    "my_dogs": dog_list,
-                }
-            )
+        result = [
+            {
+                "name": owner.name,
+                "mail": owner.email,
+                "age": owner.age,
+                "my_dogs": [
+                    {"name": dog.name, "age": dog.age} for dog in owner.dogs.all()
+                ],
+            }
+            for owner in Owner.objects.all()
+        ]
         return JsonResponse({"MESSAGE": result}, status=200)
 
 
@@ -52,14 +44,12 @@ class DogView(View):
         return JsonResponse({"MESSAGE": "CREATED"}, status=201)
 
     def get(self, request):
-        dogs = Dog.objects.all()
-        result = []
-        for dog in dogs:
-            result.append(
-                {
-                    "name": dog.name,
-                    "age": dog.age,
-                    "owner": dog.owner.name,
-                }
-            )
+        result = [
+            {
+                "name": dog.name,
+                "age": dog.age,
+                "owner": dog.owner.name,
+            }
+            for dog in Dog.objects.all()
+        ]
         return JsonResponse({"MESSAGE": result}, status=200)
